@@ -1,0 +1,35 @@
+# ============================================
+# PayAssist AI Backend - Requirements
+# ============================================
+# Run: pip install -r requirements.txt
+# ============================================
+
+# ---------- FastAPI Server ----------
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+
+# ---------- RAG & Vector Database ----------
+chromadb>=0.4.22
+sentence-transformers>=2.2.2
+
+# ---------- Document Loading ----------
+# For reading .docx files
+python-docx>=1.1.0
+# For reading .pdf files (optional)
+pypdf>=4.0.0
+
+# ---------- LangChain (Document Splitting) ----------
+# NOTE: langchain-community is being sunset
+# Use these specific packages instead:
+langchain-text-splitters>=0.2.0
+langchain-community>=0.2.0
+
+# ---------- HTTP Client ----------
+# For calling Ollama API
+requests>=2.31.0
+
+# ---------- Optional: OpenAI (if you switch to paid) ----------
+# openai>=1.0.0
+
+# ---------- Utilities ----------
+typing-extensions>=4.8.0
