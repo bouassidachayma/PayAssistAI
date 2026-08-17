@@ -37,14 +37,6 @@ private fun formatAmount(amount: Double): String {
     return String.format("%.3f", amount).trimEnd('0').trimEnd('.')
 }
 
-/**
- * Compose's Material3 DatePicker returns selectedDateMillis as midnight
- * UTC of the picked calendar date — not local midnight. Comparing that
- * directly against tx.date (a real local-timezone timestamp) shifts the
- * filter boundary by your UTC offset, which can silently exclude or
- * include transactions near the edges of the range. This extracts the
- * Y/M/D the user actually picked and rebuilds it as local midnight.
- */
 private fun normalizeToLocalStartOfDay(utcMillis: Long): Long {
     val utcCal = Calendar.getInstance(TimeZone.getTimeZone("UTC")).apply {
         timeInMillis = utcMillis
@@ -729,7 +721,8 @@ fun FullScreenDatePickerDialog(
                     TextButton(
                         onClick = {
                             datePickerState.selectedDateMillis?.let { onDateSelected(it) }
-                        }
+                        },
+                        enabled = datePickerState.selectedDateMillis != null
                     ) { Text("OK") }
                 }
             }

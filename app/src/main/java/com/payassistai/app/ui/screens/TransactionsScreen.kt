@@ -84,10 +84,6 @@ fun TransactionsScreen(
 
     var showList by remember { mutableStateOf(false) }
 
-    // Admin sees transactions across every merchant, so searching by
-    // merchant name is useful there. A merchant's own list is already
-    // scoped to just their transactions, so merchant-name search is
-    // meaningless for them - only status search applies.
     val filteredTransactions = transactions.filter {
         if (isAdmin) {
             it.merchant.contains(searchQuery, ignoreCase = true) ||
@@ -345,8 +341,6 @@ fun TransactionsScreen(
         val isApproved = transaction.status == "Approved"
         val isDeclined = transaction.status == "Declined"
         val isVoided = transaction.status == "Voided"
-        // Only the merchant can void their own transaction - admin is
-        // view-only here and never sees the Void action.
         val canVoid = isApproved && isToday(transaction.date) && !isAdmin
 
         AlertDialog(
@@ -710,62 +704,9 @@ fun TransactionsScreen(
     }
 
     if (showAddMerchantDialog) {
-        var name by remember { mutableStateOf("") }
-        var email by remember { mutableStateOf("") }
-        var password by remember { mutableStateOf("") }
-        var category by remember { mutableStateOf("") }
-
-        AlertDialog(
-            onDismissRequest = { showAddMerchantDialog = false },
-            title = { Text("Add Merchant") },
-            text = {
-                Column {
-                    OutlinedTextField(
-                        value = name,
-                        onValueChange = { name = it },
-                        label = { Text("Merchant Name") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = email,
-                        onValueChange = { email = it },
-                        label = { Text("Email") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = password,
-                        onValueChange = { password = it },
-                        label = { Text("Password") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = category,
-                        onValueChange = { category = it },
-                        label = { Text("Category (e.g. Food, Shopping)") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && category.isNotBlank()) {
-                            authViewModel.addMerchant(name, email, password, category)
-                            showAddMerchantDialog = false
-                        }
-                    }
-                ) {
-                    Text("Add")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showAddMerchantDialog = false }) {
-                    Text("Cancel")
-                }
-            }
+        AddMerchantDialog(
+            authViewModel = authViewModel,
+            onDismiss = { showAddMerchantDialog = false }
         )
     }
 

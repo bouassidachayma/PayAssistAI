@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private val EMAIL_PATTERN = Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val merchantRepository: MerchantRepository,
@@ -73,7 +75,8 @@ class AuthViewModel @Inject constructor(
         viewModelScope.launch {
             _error.value = null
             try {
-                val merchant = merchantRepository.getMerchantByEmail(email)
+                val normalizedEmail = email.trim().lowercase()
+                val merchant = merchantRepository.getMerchantByEmail(normalizedEmail)
                 if (merchant != null && PasswordUtils.matches(password, merchant.passwordHash) && merchant.isActive) {
                     sessionManager.saveSession(merchant.id, merchant.role)
                     merchantRepository.setCurrentMerchant(merchant)
@@ -139,20 +142,47 @@ class AuthViewModel @Inject constructor(
 
     fun isAdmin(): Boolean = currentMerchant.value?.role == "admin"
 
-    fun addMerchant(name: String, email: String, password: String, category: String) {
+    fun addMerchant(
+        name: String,
+        email: String,
+        password: String,
+        category: String,
+        callback: (Boolean, String?) -> Unit
+    ) {
         viewModelScope.launch {
             try {
+                val normalizedEmail = email.trim().lowercase()
+
+                if (normalizedEmail.isBlank()) {
+                    callback(false, "Email is required")
+                    return@launch
+                }
+
+                if (!EMAIL_PATTERN.matches(normalizedEmail)) {
+                    callback(false, "Please enter a valid email address")
+                    return@launch
+                }
+
+                val existing = merchantRepository.getMerchantByEmail(normalizedEmail)
+                if (existing != null) {
+                    callback(false, "A merchant with this email already exists")
+                    return@launch
+                }
+
                 val merchant = Merchant(
                     name = name,
-                    email = email,
+                    email = normalizedEmail,
                     passwordHash = PasswordUtils.hash(password),
                     category = category,
                     role = "merchant"
                 )
                 merchantRepository.insert(merchant)
                 loadAllMerchants()
+                callback(true, null)
             } catch (e: Exception) {
-                _error.value = "Failed to add merchant: ${e.message}"
+                val msg = "Failed to add merchant: ${e.message}"
+                _error.value = msg
+                callback(false, msg)
             }
         }
     }
@@ -162,9 +192,6 @@ class AuthViewModel @Inject constructor(
             try {
                 val merchant = merchantRepository.getMerchantById(merchantId)
                 if (merchant != null) {
-                    // Cascade: remove this merchant's transaction history too,
-                    // since TransactionEntity.merchantId isn't a real foreign
-                    // key with cascade delete at the Room level.
                     transactionRepository.deleteTransactionsForMerchant(merchant.id)
                     merchantRepository.delete(merchant)
                     loadAllMerchants()

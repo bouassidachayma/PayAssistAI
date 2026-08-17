@@ -61,11 +61,8 @@ fun AdminPanelScreen(
 
         if (showAddDialog) {
             AddMerchantDialog(
-                onDismiss = { showAddDialog = false },
-                onAdd = { name, email, password, category ->
-                    authViewModel.addMerchant(name, email, password, category)
-                    showAddDialog = false
-                }
+                authViewModel = authViewModel,
+                onDismiss = { showAddDialog = false }
             )
         }
     }
@@ -128,13 +125,15 @@ fun MerchantItem(merchant: Merchant, onDelete: () -> Unit) {
 
 @Composable
 fun AddMerchantDialog(
-    onDismiss: () -> Unit,
-    onAdd: (name: String, email: String, password: String, category: String) -> Unit
+    authViewModel: AuthViewModel,
+    onDismiss: () -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+    var isLoading by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -145,44 +144,76 @@ fun AddMerchantDialog(
                     value = name,
                     onValueChange = { name = it },
                     label = { Text("Merchant Name") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        email = it
+                        errorMessage = null
+                    },
                     label = { Text("Email") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = errorMessage != null
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
                     label = { Text("Password") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
                     value = category,
                     onValueChange = { category = it },
                     label = { Text("Category (e.g. Food, Shopping)") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
+                if (errorMessage != null) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = errorMessage!!,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
         },
         confirmButton = {
             TextButton(
                 onClick = {
                     if (name.isNotBlank() && email.isNotBlank() && password.isNotBlank() && category.isNotBlank()) {
-                        onAdd(name, email, password, category)
+                        isLoading = true
+                        errorMessage = null
+                        authViewModel.addMerchant(name, email, password, category) { success, error ->
+                            isLoading = false
+                            if (success) {
+                                onDismiss()
+                            } else {
+                                errorMessage = error ?: "Failed to add merchant"
+                            }
+                        }
+                    } else {
+                        errorMessage = "All fields are required"
                     }
-                }
+                },
+                enabled = !isLoading
             ) {
-                Text("Add")
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                } else {
+                    Text("Add")
+                }
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(onClick = onDismiss, enabled = !isLoading) {
                 Text("Cancel")
             }
         }
