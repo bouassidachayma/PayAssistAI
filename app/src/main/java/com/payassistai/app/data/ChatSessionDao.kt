@@ -24,4 +24,7 @@ interface ChatSessionDao {
 
     @Query("SELECT * FROM chat_sessions WHERE id = :id")
     suspend fun getSessionById(id: Int): ChatSession?
+
+    @Query("UPDATE chat_sessions SET isPinned = :isPinned WHERE id = :sessionId")
+    suspend fun setPinned(sessionId: Int, isPinned: Boolean)
 }

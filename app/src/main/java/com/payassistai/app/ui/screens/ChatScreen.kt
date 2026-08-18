@@ -51,8 +51,6 @@ fun ChatScreen(
     var sessionToRename by remember { mutableStateOf<ChatSession?>(null) }
     var newTitle by remember { mutableStateOf("") }
 
-    val pinnedIds = remember { mutableStateOf<Set<Int>>(emptySet()) }
-
     val clipboardManager = LocalClipboardManager.current
     val context = LocalContext.current
 
@@ -72,11 +70,7 @@ fun ChatScreen(
     }
 
     fun togglePin(sessionId: Int) {
-        pinnedIds.value = if (pinnedIds.value.contains(sessionId)) {
-            pinnedIds.value - sessionId
-        } else {
-            pinnedIds.value + sessionId
-        }
+        chatViewModel.togglePin(sessionId)
         expandedSessionId = null
     }
 
@@ -131,9 +125,9 @@ fun ChatScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 } else {
-                    val pinnedSessions = sessions.filter { pinnedIds.value.contains(it.id) }
+                    val pinnedSessions = sessions.filter { it.isPinned }
                         .sortedByDescending { it.updatedAt }
-                    val unpinnedSessions = sessions.filter { !pinnedIds.value.contains(it.id) }
+                    val unpinnedSessions = sessions.filter { !it.isPinned }
                         .sortedByDescending { it.updatedAt }
 
                     val now = System.currentTimeMillis()

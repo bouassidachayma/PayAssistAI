@@ -24,4 +24,7 @@ class ChatRepository(
         sessionDao.getSessionsWithMessagesForMerchant(merchantId)
 
     suspend fun getSessionById(id: Int): ChatSession? = sessionDao.getSessionById(id)
+
+    suspend fun setPinned(sessionId: Int, isPinned: Boolean) =
+        sessionDao.setPinned(sessionId, isPinned)
 }

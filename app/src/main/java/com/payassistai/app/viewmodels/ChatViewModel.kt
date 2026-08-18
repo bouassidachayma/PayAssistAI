@@ -123,12 +123,16 @@ class ChatViewModel @Inject constructor(
         viewModelScope.launch {
             val session = chatRepository.getSessionById(sessionId)
             if (session != null) {
-                chatRepository.updateSession(
-                    session.copy(
-                        title = newTitle,
-                        updatedAt = System.currentTimeMillis()
-                    )
-                )
+                chatRepository.updateSession(session.copy(title = newTitle, updatedAt = System.currentTimeMillis()))
+            }
+        }
+    }
+
+    fun togglePin(sessionId: Int) {
+        viewModelScope.launch {
+            val session = chatRepository.getSessionById(sessionId)
+            if (session != null) {
+                chatRepository.setPinned(sessionId, !session.isPinned)
             }
         }
     }
@@ -158,12 +162,7 @@ class ChatViewModel @Inject constructor(
                 session?.let { s ->
                     if (s.title == "New Chat" || s.title.isEmpty()) {
                         val newTitle = text.take(30) + if (text.length > 30) "…" else ""
-                        chatRepository.updateSession(
-                            s.copy(
-                                title = newTitle,
-                                updatedAt = System.currentTimeMillis()
-                            )
-                        )
+                        chatRepository.updateSession(s.copy(title = newTitle, updatedAt = System.currentTimeMillis()))
                     }
                 }
 
@@ -186,8 +185,7 @@ class ChatViewModel @Inject constructor(
                                 append("\n📊 Relevance: ${it.toInt()}%")
                             }
                         }
-                        val botMsg =
-                            ChatMessage(text = botText, sender = "bot", sessionId = currentId)
+                        val botMsg = ChatMessage(text = botText, sender = "bot", sessionId = currentId)
                         chatRepository.insertMessage(botMsg)
 
                         session?.let { s ->

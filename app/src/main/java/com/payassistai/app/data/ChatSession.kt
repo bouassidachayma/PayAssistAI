@@ -10,5 +10,6 @@ data class ChatSession(
     val title: String,          // first 30 chars of the first user message or date
     val createdAt: Long = System.currentTimeMillis(),
     val updatedAt: Long = System.currentTimeMillis(),
-    val merchantId: Int = 0
+    val merchantId: Int = 0 ,
+    val isPinned: Boolean = false
 )
