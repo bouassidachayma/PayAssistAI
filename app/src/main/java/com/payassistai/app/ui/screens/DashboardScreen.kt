@@ -307,7 +307,7 @@ fun DashboardScreen(
                                 selectedMerchant = null
                                 showDropdown = false
                             },
-                            label = { Text("Date Range") },
+                            label = { Text("Date") },
                             leadingIcon = { Icon(Icons.Default.DateRange, contentDescription = null, modifier = Modifier.size(16.dp)) },
                             modifier = Modifier.weight(if (isAdmin) 1f else 1f)
                         )
