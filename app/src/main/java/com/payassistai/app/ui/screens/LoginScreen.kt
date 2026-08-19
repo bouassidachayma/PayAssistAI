@@ -8,7 +8,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.text.input.PasswordVisualTransformation
+import com.payassistai.app.ui.screens.components.PasswordOutlinedTextField
 import com.payassistai.app.viewmodels.AuthViewModel
 
 @Composable
@@ -55,17 +55,11 @@ fun LoginScreen(
         )
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        PasswordOutlinedTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
-            singleLine = true,
-            visualTransformation = PasswordVisualTransformation(),
-            colors = OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline
-            )
+            label = "Password",
+            modifier = Modifier.fillMaxWidth()
         )
 
         if (errorMessage != null) {

@@ -6,8 +6,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import com.payassistai.app.ui.screens.components.PasswordOutlinedTextField
 import com.payassistai.app.viewmodels.AuthViewModel
 
 @Composable
@@ -27,31 +27,25 @@ fun ChangePasswordDialog(
         title = { Text("🔒 Change Password") },
         text = {
             Column {
-                OutlinedTextField(
+                PasswordOutlinedTextField(
                     value = oldPassword,
                     onValueChange = { oldPassword = it },
-                    label = { Text("Current Password") },
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
+                    label = "Current Password",
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
+                PasswordOutlinedTextField(
                     value = newPassword,
                     onValueChange = { newPassword = it },
-                    label = { Text("New Password") },
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true
+                    label = "New Password",
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
+                PasswordOutlinedTextField(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
-                    label = { Text("Confirm New Password") },
+                    label = "Confirm New Password",
                     modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = PasswordVisualTransformation(),
-                    singleLine = true,
                     isError = confirmPassword.isNotBlank() && newPassword != confirmPassword
                 )
                 if (errorMessage != null) {

@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.payassistai.app.data.Merchant
+import com.payassistai.app.ui.screens.components.PasswordOutlinedTextField
 import com.payassistai.app.viewmodels.AuthViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -160,12 +161,11 @@ fun AddMerchantDialog(
                     isError = errorMessage != null
                 )
                 Spacer(Modifier.height(8.dp))
-                OutlinedTextField(
+                PasswordOutlinedTextField(
                     value = password,
                     onValueChange = { password = it },
-                    label = { Text("Password") },
-                    modifier = Modifier.fillMaxWidth(),
-                    singleLine = true
+                    label = "Password",
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(8.dp))
                 OutlinedTextField(
