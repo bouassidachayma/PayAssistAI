@@ -5,7 +5,7 @@ Intelligent merchant & terminal support chatbot — an Android app backed by a R
 PayAssist AI lets merchants troubleshoot payment-terminal errors in plain language (grounded in real payment documentation via RAG), verify transactions, simulate card payments, and review sales on a dashboard — with separate merchant and admin experiences.
 
 ## Project Structure
-PayAssistAI_Final/
+PayAssistAI/
 ├── app/ # Android client (Kotlin + Jetpack Compose)
 │ └── src/main/java/com/payassistai/app/
 │ ├── data/ # Room entities, DAOs, repositories
