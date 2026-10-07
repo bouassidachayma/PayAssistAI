@@ -1,11 +1,11 @@
 # PayAssist AI
 
-Intelligent merchant & terminal support chatbot — an Android app backed by a Retrieval-Augmented Generation (RAG) service, built for Mall of Sfax merchants during an 8-week summer internship.
+Intelligent merchant & terminal support chatbot — an Android app backed by a Retrieval-Augmented Generation (RAG) service, built for merchants during an 8-week summer internship.
 
 PayAssist AI lets merchants troubleshoot payment-terminal errors in plain language (grounded in real payment documentation via RAG), verify transactions, simulate card payments, and review sales on a dashboard — with separate merchant and admin experiences.
 
 ## Project Structure
-PayAssistAI/
+PayAssistAI_Final/
 ├── app/ # Android client (Kotlin + Jetpack Compose)
 │ └── src/main/java/com/payassistai/app/
 │ ├── data/ # Room entities, DAOs, repositories
